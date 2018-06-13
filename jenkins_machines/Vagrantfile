@@ -1,0 +1,23 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "bento/ubuntu-16.04"
+
+  config.vm.define "jenkins_master" do |jenkins_master|
+    jenkins_master.vm.network "private_network", ip: "192.168.50.4"
+    jenkins_master.vm.network "forwarded_port", guest: 8080, host: 8080
+    jenkins_master.vm.provision "shell", path: "provision_jenkins_master.sh"
+  end
+
+  config.vm.define "jenkins_node1" do |jenkins_node1|
+    jenkins_node1.vm.network "private_network", ip: "192.168.50.5"
+    jenkins_node1.vm.provision "shell", path: "provision_jenkins_node1.sh"
+  end
+
+  config.vm.define "pet_server1" do |pet_server1|
+    pet_server1.vm.network "private_network", ip: "192.168.50.10"
+    pet_server1.vm.provision "shell", path: "provision_pet_server1.sh"
+    pet_server1.vm.provision "file", source: "sudoers_pet_server1", destination: "/etc/sudoers"
+  end
+end
